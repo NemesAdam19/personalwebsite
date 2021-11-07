@@ -1,41 +1,35 @@
 <?php
-  /**
-  * Requires the "PHP Email Form" library
-  * The "PHP Email Form" library is available only in the pro version of the template
-  * The library should be uploaded to: vendor/php-email-form/php-email-form.php
-  * For more info and help: https://bootstrapmade.com/php-email-form/
-  */
-
-  // Replace contact@example.com with your real receiving email address
-  $receiving_email_address = 'fotisz1211@gmail.com';
-
-  if( file_exists($php_email_form = '../assets/vendor/php-email-form/php-email-form.php' )) {
-    include( $php_email_form );
-  } else {
-    die( 'Unable to load the "PHP Email Form" Library!');
-  }
-
-  $contact = new PHP_Email_Form;
-  $contact->ajax = true;
-  
-  $contact->to = $receiving_email_address;
-  $contact->from_name = $_POST['name'];
-  $contact->from_email = $_POST['email'];
-  $contact->subject = $_POST['subject'];
-
-  // Uncomment below code if you want to use SMTP to send emails. You need to enter your correct SMTP credentials
-  /*
-  $contact->smtp = array(
-    'host' => 'example.com',
-    'username' => 'example',
-    'password' => 'pass',
-    'port' => '587'
-  );
-  */
-
-  $contact->add_message( $_POST['name'], 'From');
-  $contact->add_message( $_POST['email'], 'Email');
-  $contact->add_message( $_POST['message'], 'Message', 10);
-
-  echo $contact->send();
+    header('Content-Type: text/html; charset=utf-8');
+    $message = "Küldés";
+        $contactName = $_POST['contactName'];
+        $contactPhone = $_POST['contactPhone'];
+        $contactEmail = $_POST['contactEmail'];
+        $contactText = $_POST['contactText'];
+    
+        if(empty($contactName) || empty($contactPhone) || empty($contactEmail) || empty($contactText)) {
+            $message = "Minden mező kitöltése kötelező!";
+            exit;
+        }
+        
+    
+        $email_from = 'fotisz1211@gmail.com';
+        $email_subject = "Új ajánlatkérelem";
+        $email_subject = '=?UTF-8?B?'.base64_encode($email_subject).'?=';
+        $email_body = base64_encode("Új ajánlatkérés információi: \n".
+            "Név: $contactName\n".
+            "Telefonszám: $contactPhone\n".
+            "E-mail: $contactEmail\n".
+            "Ajánlatkérelem: $contactText\n");
+    
+        $to = "fotisz1211@gmail.com";
+        $headers = 'Content-Type: text/plain; charset=utf-8' . "\r\n";
+        $headers .= 'Content-Transfer-Encoding: base64';
+        
+    
+        if (mail($to,$email_subject,$email_body,$headers)) {
+            $message = "Köszi! Hamarosan jelentkezünk!";
+        } else {
+            echo "Sikertelen küldés!";
+        }
+    
 ?>
